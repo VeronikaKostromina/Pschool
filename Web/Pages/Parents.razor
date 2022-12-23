@@ -1,0 +1,130 @@
+﻿@page "/parents"
+@using Pschool.Shared.ViewModels.ParentViewModels
+@inherits ParentBase
+
+<PageTitle>Parents</PageTitle>
+
+<h1>Parents info</h1>
+
+<div>
+    <button class="btn btn-success" @onclick="() => ShowDialogModal(false, true, false, new ParentViewModel())">Add</button>
+</div>
+
+@if (ShowModal)
+{
+    <div class="modal fade show" id="myModal" style="display:block" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <EditForm Model=@ParentViewModel>
+                    <FluentValidationValidator @ref="FluentValidationValidator" Options="@(options => options.IncludeAllRuleSets())" />
+                    @if (CreateAction)
+                    {
+                        <div class="modal-header">
+                            <h4>Create parent</h4>
+                        </div>
+                    }
+                    else if (UpdateAction)
+                    {
+                        <div class="modal-header">
+                            <h4>Update parent</h4>
+                        </div>
+                    }
+                    else if (DeleteAction)
+                    {
+                        <div class="modal-header">
+                            <h4>Confirm delete</h4>
+                        </div>
+                    }
+                    
+                    @if (CreateAction || UpdateAction)
+                    {
+                        <div class="modal-body">
+
+                            <div class="form-group">
+                                <label for="firstName">First name:</label>
+                                <InputText @bind-Value=ParentViewModel.FirstName class="form-control" id="firstName" />
+                                <ValidationMessage For=@(() => ParentViewModel.FirstName) />
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last name:</label>
+                                <InputText @bind-Value=ParentViewModel.LastName class="form-control" id="lastName" />
+                                <ValidationMessage For=@(() => ParentViewModel.LastName) />
+                            </div>
+                            <div class="form-group">
+                                <label for="Email">Email:</label>
+                                <InputText @bind-Value=ParentViewModel.Email class="form-control" id="Email" />
+                                <ValidationMessage For=@(() => ParentViewModel.Email) />
+                            </div>
+                            <div class="form-group">
+                                <label for="HomeAddress">Home address:</label>
+                                <input @bind="@ParentViewModel.HomeAddress" class="form-control" id="HomeAddress" />
+                            </div>
+                            <div class="form-group">
+                                <label for="Phone">Phone:</label>
+                                <InputText @bind-Value=ParentViewModel.Phone class="form-control" id="Phone" />
+                                <ValidationMessage For=@(() => ParentViewModel.Phone) />
+                            </div>
+                            <br />
+                        </div>
+                    }
+                    @if (DeleteAction)
+                    {
+                        <div class="modal-body">
+                            <h>Are you sure you want to delete parent?</h>
+                        </div>
+                    }
+                    <div class="modal-footer">
+                        <div class="button-group">
+                            @if (CreateAction)
+                            {
+                                <button class="btn btn-success" @onclick="Add">Add</button>
+                            }
+                            @if (UpdateAction)
+                            {
+                                <button class="btn btn-primary" @onclick="Update">Update</button>
+                            }
+                            @if (DeleteAction)
+                            {
+                                <button class="btn btn-danger" @onclick="Delete">Delete</button>
+                            }
+                            <button class="btn btn-secondary" @onclick="ModalCancel">Cancel</button>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Email</th>
+            <th>Home address</th>
+            <th>Phone</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var parent in Parents)
+        {
+            <tr>
+                <td hidden="true">@parent.Id</td>
+                <td>@parent.FirstName</td>
+                <td>@parent.LastName</td>
+                <td>@parent.Email</td>
+                <td>@parent.HomeAddress</td>
+                <td>@parent.Phone</td>
+                <td>
+                    <button class="btn btn-primary" 
+                            @onclick="() => 
+                             ShowDialogModal(true, false, false,new ParentViewModel(){Id = parent.Id, FirstName = parent.FirstName, LastName = parent.LastName,
+                             Email = parent.Email, Phone = parent.Phone, HomeAddress = parent.HomeAddress})">Edit</button>
+                    <button class="btn btn-danger" @onclick="() => ShowDialogModal(false, false, true,parent)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

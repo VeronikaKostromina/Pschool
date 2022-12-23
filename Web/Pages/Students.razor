@@ -1,0 +1,145 @@
+﻿@page "/students"
+@using Pschool.Shared.ViewModels.StudentViewModels
+@inherits StudentBase
+
+<PageTitle>Parents</PageTitle>
+
+<h1>Student info</h1>
+
+@if (ShowModal)
+{
+    <div class="modal fade show" id="myModal" style="display:block" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <EditForm Model=@StudentViewModel>
+                    <FluentValidationValidator @ref="FluentValidationValidator" Options="@(options => options.IncludeAllRuleSets())" />
+                    @if (CreateAction)
+                    {
+                        <div class="modal-header">
+                            <h4>Create student</h4>
+                        </div>
+                    }
+                    else if (UpdateAction)
+                    {
+                        <div class="modal-header">
+                            <h4>Update student</h4>
+                        </div>
+                    }
+                    else if (DeleteAction)
+                    {
+                        <div class="modal-header">
+                            <h4>Confirm delete</h4>
+                        </div>
+                    }
+                    @if (CreateAction || UpdateAction)
+                    {
+                        <div class="modal-body">
+
+                            <div class="form-group">
+                                <label for="firstName">First name:</label>
+                                <InputText @bind-Value=StudentViewModel.FirstName class="form-control" id="firstName" />
+                                <ValidationMessage For=@(() => StudentViewModel.FirstName) />
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last name:</label>
+                                <InputText @bind-Value=StudentViewModel.LastName class="form-control" id="lastName" />
+                                <ValidationMessage For=@(() => StudentViewModel.LastName) />
+                            </div>
+                            <div class="form-group">
+                                <label for="classNumber">Class number:</label>
+                                <InputNumber @bind-Value=StudentViewModel.ClassNumber class="form-control" id="classNumber" />
+                                <ValidationMessage For=@(() => StudentViewModel.ClassNumber) />
+                            </div>
+                            <div class="form-group">
+                                <label for="Parents">Student`s parent:</label>
+
+                                <InputSelect id="Parents" class="form-control" @bind-Value=StudentViewModel.ParentId>
+
+                                    @foreach (var parent in Parents)
+                                    {
+                                        <option value="@parent.Id">@parent.FirstName @parent.LastName</option>
+                                    }
+                                </InputSelect>
+                                <ValidationMessage For=@(() => StudentViewModel.ParentId) />
+                            </div>
+                            <br />
+                        </div>
+                    }
+                    @if (DeleteAction)
+                    {
+                        <div class="modal-body">
+                            <h>Are you sure you want to delete parent?</h>
+                        </div>
+                    }
+
+                    <div class="modal-footer">
+                        <div class="button-group">
+                            @if (CreateAction)
+                            {
+                                <button class="btn btn-success" @onclick="Add">Add</button>
+                            }
+                            @if (UpdateAction)
+                            {
+                                <button class="btn btn-primary" @onclick="Update">Update</button>
+                            }
+                            @if (DeleteAction)
+                            {
+                                <button class="btn btn-danger" @onclick="Delete">Delete</button>
+                            }
+                            <button class="btn btn-secondary" @onclick="ModalCancel">Cancel</button>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
+<EditForm Model="StudentViewModel">
+
+    <button class="btn btn-success" @onclick="() => ShowDialogModal(false, true, false, new StudentViewModel())">Add</button>
+    <label>Filter by parents:</label>
+
+    <InputSelect id="Parents" class="form-control"
+                 ValueExpression="@(() => ParentId)"
+                 Value="@ParentId"
+                 ValueChanged="@((long value) => OnParentChange(value))">
+
+        <option value="-1"> Select Parent... </option>
+        @foreach (var parent in Parents)
+        {
+            <option value="@parent.Id">@parent.FirstName @parent.LastName</option>
+        }
+
+    </InputSelect>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>First name</th>
+                <th>Last name</th>
+                <th>Class number</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in Students)
+            {
+                <tr>
+                    <td>@student.FirstName</td>
+                    <td>@student.LastName</td>
+                    <td align="center">@student.ClassNumber</td>
+                    <td>
+                        <button class="btn btn-primary"
+                            @onclick="() => ShowDialogModal(true, false, false, new StudentViewModel() {Id = student.Id, ParentId = student.ParentId, ClassNumber = student.ClassNumber, FirstName = student.FirstName, LastName = student.LastName })">
+                            Edit
+                        </button>
+                        <button class="btn btn-danger" @onclick="() => ShowDialogModal(false, false, true, student)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</EditForm>
+
