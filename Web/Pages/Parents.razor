@@ -7,36 +7,36 @@
 <h1>Parents info</h1>
 
 <div>
-    <button class="btn btn-success" @onclick="() => ShowDialogModal(false, true, false, new ParentDetailsViewModel())">Add</button>
+    <button class="btn btn-success" @onclick="() => ShowDialogModal(ActionType.Create, new ParentDetailsViewModel())">Add</button>
 </div>
 
-@if (ShowModal)
+@if (ActionType != ActionType.None)
 {
     <div class="modal fade show" id="myModal" style="display:block" aria-modal="true" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <EditForm Model=@ParentViewModel>
                     <FluentValidationValidator @ref="FluentValidationValidator" Options="@(options => options.IncludeAllRuleSets())" />
-                    @if (CreateAction)
+                    @if (ActionType == ActionType.Create)
                     {
                         <div class="modal-header">
                             <h4>Create parent</h4>
                         </div>
                     }
-                    else if (UpdateAction)
+                    else if (ActionType == ActionType.Update)
                     {
                         <div class="modal-header">
                             <h4>Update parent</h4>
                         </div>
                     }
-                    else if (DeleteAction)
+                    else if (ActionType == ActionType.Delete)
                     {
                         <div class="modal-header">
                             <h4>Confirm delete</h4>
                         </div>
                     }
-                    
-                    @if (CreateAction || UpdateAction)
+
+                    @if (ActionType == ActionType.Create || ActionType == ActionType.Update)
                     {
                         <div class="modal-body">
 
@@ -67,7 +67,7 @@
                             <br />
                         </div>
                     }
-                    @if (DeleteAction)
+                    @if (ActionType == ActionType.Delete)
                     {
                         <div class="modal-body">
                             <h>Are you sure you want to delete parent?</h>
@@ -75,15 +75,15 @@
                     }
                     <div class="modal-footer">
                         <div class="button-group">
-                            @if (CreateAction)
+                            @if (ActionType == ActionType.Create)
                             {
                                 <button class="btn btn-success" @onclick="Add">Add</button>
                             }
-                            @if (UpdateAction)
+                            @if (ActionType == ActionType.Update)
                             {
                                 <button class="btn btn-primary" @onclick="Update">Update</button>
                             }
-                            @if (DeleteAction)
+                            @if (ActionType == ActionType.Delete)
                             {
                                 <button class="btn btn-danger" @onclick="Delete">Delete</button>
                             }
@@ -118,11 +118,19 @@
                 <td>@parent.HomeAddress</td>
                 <td>@parent.Phone</td>
                 <td>
-                    <button class="btn btn-primary" 
-                            @onclick="() => 
-                             ShowDialogModal(true, false, false,new ParentDetailsViewModel(){Id = parent.Id, FirstName = parent.FirstName, LastName = parent.LastName,
-                             Email = parent.Email, Phone = parent.Phone, HomeAddress = parent.HomeAddress})">Edit</button>
-                    <button class="btn btn-danger" @onclick="() => ShowDialogModal(false, false, true,parent)">Delete</button>
+                    <button class="btn btn-primary"
+                        @onclick="() => ShowDialogModal(
+                           ActionType.Update,
+                           new ParentDetailsViewModel() {
+                               Id = parent.Id,
+                               FirstName = parent.FirstName,
+                               LastName = parent.LastName,
+                               Email = parent.Email,
+                               Phone = parent.Phone,
+                               HomeAddress = parent.HomeAddress})">
+                        Edit
+                    </button>
+                    <button class="btn btn-danger" @onclick="() => ShowDialogModal(ActionType.Delete, parent)">Delete</button>
                 </td>
             </tr>
         }

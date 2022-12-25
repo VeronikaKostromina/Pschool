@@ -13,11 +13,8 @@ namespace Web.Pages
         public List<ParentDetailsViewModel> Parents { get; set; } = new List<ParentDetailsViewModel>();
         public ParentDetailsViewModel ParentViewModel { get; set; } = new ParentDetailsViewModel();
         public FluentValidationValidator? FluentValidationValidator { get; set; } = new FluentValidationValidator();
-        public bool ShowModal { get; set; } = false;
-        public bool DeleteAction { get; set; } = false;
 
-        public bool CreateAction { get; set; } = false;
-        public bool UpdateAction { get; set; } = false;
+        public ActionType ActionType { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -29,7 +26,7 @@ namespace Web.Pages
             if (await FluentValidationValidator!.ValidateAsync())
             {
                 Parents.Add(await ParentService.Create(ParentViewModel));
-                ShowModal = false;
+                ActionType = ActionType.None;
             }
         }
 
@@ -37,7 +34,7 @@ namespace Web.Pages
         {
             await ParentService.Delete(ParentViewModel.Id);
             Parents.Remove(ParentViewModel);
-            ShowModal = false;
+            ActionType = ActionType.None;
         }
 
         public async Task Update()
@@ -47,25 +44,18 @@ namespace Web.Pages
                 var parent = await ParentService.Update(ParentViewModel);
                 int index = Parents.FindIndex(x => x.Id == parent.Id);
                 Parents[index] = parent;
-                ShowModal = false;
+                ActionType = ActionType.None;
             }
         }
 
         public void ModalCancel()
         {
-            ShowModal = false;
-            DeleteAction = false;
-            CreateAction = false;
-            UpdateAction = false;
+            ActionType = ActionType.None;
         }
 
-        public void ShowDialogModal(bool update, bool create, bool delete, ParentDetailsViewModel parent)
+        public void ShowDialogModal(ActionType actionType, ParentDetailsViewModel parent)
         {
-            ShowModal = true;
-            DeleteAction = delete;
-            CreateAction = create;
-            UpdateAction = update;
-
+            ActionType = actionType;
             ParentViewModel = parent;
         }
     }

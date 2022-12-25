@@ -1,4 +1,5 @@
 ﻿using Blazored.FluentValidation;
+using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components;
 using Pschool.Shared.ViewModels.ParentViewModels;
 using Pschool.Shared.ViewModels.StudentViewModels;
@@ -8,22 +9,25 @@ namespace Web.Pages
 {
     public class StudentBase : ComponentBase
     {
+        private string ErrorMessage => "There is an error, please refresh the page or try again later.";
+
         [Inject]
         public IStudentService StudentService { get; set; }
+
         [Inject]
         public IParentService ParentService { get; set; }
 
-        public List<StudentDetailsViewModel> Students { get; set; } = new List<StudentDetailsViewModel>();
+        [Inject]
+        public IToastService ToastService { get; set; }
+
+        public List<StudentDetailsViewModel>? Students { get; set; } = new List<StudentDetailsViewModel>();
         public List<ParentDetailsViewModel> Parents { get; set; } = new List<ParentDetailsViewModel>();
         public StudentDetailsViewModel StudentViewModel { get; set; } = new StudentDetailsViewModel();
-        public ParentDetailsViewModel ParentViewModel { get; set; } = new ParentDetailsViewModel();
         public FluentValidationValidator? FluentValidationValidator { get; set; } = new FluentValidationValidator();
-        public long ParentId { get; set; }
-        public bool ShowModal { get; set; } = false;
-        public bool DeleteAction { get; set; } = false;
 
-        public bool CreateAction { get; set; } = false;
-        public bool UpdateAction { get; set; } = false;
+        public long ParentId { get; set; }
+
+        public ActionType ActionType { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -35,16 +39,34 @@ namespace Web.Pages
         {
             if (await FluentValidationValidator!.ValidateAsync())
             {
-                Students.Add(await StudentService.Create(StudentViewModel));
-                ShowModal = false;
+                var student = await StudentService.Create(StudentViewModel);
+                if (student != null)
+                {
+                    Students?.Add(student);
+                    ActionType = ActionType.None;
+
+                    ToastService.ShowSuccess("Student created.");
+                }
+                else
+                {
+                    ToastService.ShowError(ErrorMessage);
+                }
             }
         }
 
         public async Task Delete()
         {
-            await StudentService.Delete(StudentViewModel.Id);
-            Students.Remove(StudentViewModel);
-            ShowModal = false;
+            var result = await StudentService.Delete(StudentViewModel.Id);
+            if (result)
+            {
+                Students?.Remove(StudentViewModel);
+                ActionType = ActionType.None;
+                ToastService.ShowSuccess("Student deleted.");
+            }
+            else
+            {
+                ToastService.ShowError(ErrorMessage);
+            }
         }
 
         public async Task Update()
@@ -52,27 +74,28 @@ namespace Web.Pages
             if (await FluentValidationValidator!.ValidateAsync())
             {
                 var student = await StudentService.Update(StudentViewModel);
-                int index = Students.FindIndex(x => x.Id == student.Id);
-                Students[index] = student;
-                ShowModal = false;
+                if (student != null)
+                {
+                    if (Students != null)
+                        Students[Students.FindIndex(x => x.Id == student.Id)] = student;
+                    ActionType = ActionType.None;
+                    ToastService.ShowSuccess("Student updated.");
+                }
+                else
+                {
+                    ToastService.ShowError(ErrorMessage);
+                }
             }
         }
 
         public void ModalCancel()
         {
-            ShowModal = false;
-            DeleteAction = false;
-            CreateAction = false;
-            UpdateAction = false;
+            ActionType = ActionType.None;
         }
 
-        public void ShowDialogModal(bool update, bool create, bool delete, StudentDetailsViewModel student)
+        public void ShowDialogModal(ActionType actionType, StudentDetailsViewModel student)
         {
-            ShowModal = true;
-            DeleteAction = delete;
-            CreateAction = create;
-            UpdateAction = update;
-
+            ActionType = actionType;
             StudentViewModel = student;
         }
 

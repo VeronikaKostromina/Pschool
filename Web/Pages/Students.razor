@@ -6,32 +6,32 @@
 
 <h1>Student info</h1>
 
-@if (ShowModal)
+@if (ActionType != ActionType.None)
 {
     <div class="modal fade show" id="myModal" style="display:block" aria-modal="true" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <EditForm Model=@StudentViewModel>
                     <FluentValidationValidator @ref="FluentValidationValidator" Options="@(options => options.IncludeAllRuleSets())" />
-                    @if (CreateAction)
+                    @if (ActionType == ActionType.Create)
                     {
                         <div class="modal-header">
                             <h4>Create student</h4>
                         </div>
                     }
-                    else if (UpdateAction)
+                    else if (ActionType == ActionType.Update)
                     {
                         <div class="modal-header">
                             <h4>Update student</h4>
                         </div>
                     }
-                    else if (DeleteAction)
+                    else if (ActionType == ActionType.Delete)
                     {
                         <div class="modal-header">
                             <h4>Confirm delete</h4>
                         </div>
                     }
-                    @if (CreateAction || UpdateAction)
+                    @if (ActionType == ActionType.Create || ActionType == ActionType.Update)
                     {
                         <div class="modal-body">
 
@@ -65,7 +65,7 @@
                             <br />
                         </div>
                     }
-                    @if (DeleteAction)
+                    @if (ActionType == ActionType.Delete)
                     {
                         <div class="modal-body">
                             <h>Are you sure you want to delete parent?</h>
@@ -74,15 +74,15 @@
 
                     <div class="modal-footer">
                         <div class="button-group">
-                            @if (CreateAction)
+                            @if (ActionType == ActionType.Create)
                             {
                                 <button class="btn btn-success" @onclick="Add">Add</button>
                             }
-                            @if (UpdateAction)
+                            @if (ActionType == ActionType.Update)
                             {
                                 <button class="btn btn-primary" @onclick="Update">Update</button>
                             }
-                            @if (DeleteAction)
+                            @if (ActionType == ActionType.Delete)
                             {
                                 <button class="btn btn-danger" @onclick="Delete">Delete</button>
                             }
@@ -97,7 +97,7 @@
 
 <EditForm Model="StudentViewModel">
 
-    <button class="btn btn-success" @onclick="() => ShowDialogModal(false, true, false, new StudentDetailsViewModel())">Add</button>
+    <button class="btn btn-success" @onclick="() => ShowDialogModal(ActionType.Create, new StudentDetailsViewModel())">Add</button>
     <label>Filter by parents:</label>
 
     <InputSelect id="parent" class="form-control"
@@ -131,10 +131,17 @@
                     <td align="center">@student.ClassNumber</td>
                     <td>
                         <button class="btn btn-primary"
-                            @onclick="() => ShowDialogModal(true, false, false, new StudentDetailsViewModel() {Id = student.Id, ParentId = student.ParentId, ClassNumber = student.ClassNumber, FirstName = student.FirstName, LastName = student.LastName })">
+                            @onclick="() => ShowDialogModal(
+                                ActionType.Update,
+                                new StudentDetailsViewModel() {
+                                    Id = student.Id,
+                                    ParentId = student.ParentId,
+                                    ClassNumber = student.ClassNumber,
+                                    FirstName = student.FirstName,
+                                    LastName = student.LastName })">
                             Edit
                         </button>
-                        <button class="btn btn-danger" @onclick="() => ShowDialogModal(false, false, true, student)">Delete</button>
+                        <button class="btn btn-danger" @onclick="() => ShowDialogModal(ActionType.Delete, student)">Delete</button>
                     </td>
                 </tr>
             }
@@ -142,4 +149,3 @@
     </table>
 
 </EditForm>
-
