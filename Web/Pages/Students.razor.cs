@@ -42,6 +42,8 @@ namespace Web.Pages
                 var student = await StudentService.Create(StudentViewModel);
                 if (student != null)
                 {
+                    var parent = Parents[Parents.FindIndex(x => x.Id == StudentViewModel.ParentId)];
+                    student.ParentFullName = string.Join(' ', parent.FirstName, parent.LastName);
                     Students?.Add(student);
                     ActionType = ActionType.None;
 
@@ -77,6 +79,8 @@ namespace Web.Pages
                 var student = await StudentService.Update(StudentViewModel);
                 if (student != null)
                 {
+                    var parent = Parents[Parents.FindIndex(x => x.Id == StudentViewModel.ParentId)];
+                    student.ParentFullName = string.Join(' ', parent.FirstName, parent.LastName);
                     if (Students != null)
                         Students[Students.FindIndex(x => x.Id == student.Id)] = student;
                     ActionType = ActionType.None;

@@ -7,5 +7,6 @@
         public string? LastName { get; set; }
         public int ClassNumber { get; set; }
         public long ParentId { get; set; }
+        public string? ParentFullName { get; set; }
     }
 }

@@ -112,26 +112,29 @@
         }
 
     </InputSelect>
+</EditForm>
 
-    <table class="table">
-        <thead>
+<table class="table">
+    <thead>
+        <tr>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Parent</th>
+            <th>Class number</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var student in Students)
+        {
             <tr>
-                <th>First name</th>
-                <th>Last name</th>
-                <th>Class number</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var student in Students)
-            {
-                <tr>
-                    <td>@student.FirstName</td>
-                    <td>@student.LastName</td>
-                    <td align="center">@student.ClassNumber</td>
-                    <td>
-                        <button class="btn btn-primary"
-                            @onclick="() => ShowDialogModal(
+                <td>@student.FirstName</td>
+                <td>@student.LastName</td>
+                <td>@student.ParentFullName</td>
+                <td align="center">@student.ClassNumber</td>65keb wv-
+                <td>
+                    <button class="btn btn-primary"
+                        @onclick="() => ShowDialogModal(
                                 ActionType.Update,
                                 new StudentDetailsViewModel() {
                                     Id = student.Id,
@@ -139,13 +142,11 @@
                                     ClassNumber = student.ClassNumber,
                                     FirstName = student.FirstName,
                                     LastName = student.LastName })">
-                            Edit
-                        </button>
-                        <button class="btn btn-danger" @onclick="() => ShowDialogModal(ActionType.Delete, student)">Delete</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
-</EditForm>
+                        Edit
+                    </button>
+                    <button class="btn btn-danger" @onclick="() => ShowDialogModal(ActionType.Delete, student)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

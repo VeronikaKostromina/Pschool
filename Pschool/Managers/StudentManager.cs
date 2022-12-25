@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using LanguageExt.Common;
+using Microsoft.EntityFrameworkCore;
 using Pschool.Contracts;
 using Pschool.Shared.Models;
 
@@ -61,12 +62,12 @@ namespace Pschool.Managers
 
         public IQueryable<Student> FindAll()
         {
-            return studentRepository.FindAll();
+            return studentRepository.FindAll().Include(x => x.Parent);
         }
 
         public IQueryable<Student> FindByParent(long key)
         {
-            return studentRepository.Where(x => x.ParentId == key);
+            return studentRepository.Where(x => x.ParentId == key).Include(x => x.Parent);
         }
     }
 }

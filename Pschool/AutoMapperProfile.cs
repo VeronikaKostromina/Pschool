@@ -9,7 +9,9 @@ namespace Pschool
     {
         public AutoMapperProfile()
         {
-            CreateMap<Student, StudentDetailsViewModel>();
+            CreateMap<Student, StudentDetailsViewModel>().ForMember(model => model.ParentFullName,
+                options => options
+                    .MapFrom(x => string.Join(' ', x.Parent!.FirstName, x.Parent!.LastName)));
             CreateMap<CreateStudentViewModel, Student>();
             CreateMap<UpdateStudentViewModel, Student>();
 
