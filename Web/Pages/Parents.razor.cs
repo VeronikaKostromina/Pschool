@@ -1,4 +1,5 @@
 ﻿using Blazored.FluentValidation;
+using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components;
 using Pschool.Shared.ViewModels.ParentViewModels;
 using Web.Services.Contracts;
@@ -7,8 +8,12 @@ namespace Web.Pages
 {
     public class ParentBase : ComponentBase
     {
+        private string ErrorMessage => "There is an error, please refresh the page or try again later.";
+
         [Inject]
         public IParentService ParentService { get; set; }
+        [Inject]
+        public IToastService ToastService { get; set; }
 
         public List<ParentDetailsViewModel> Parents { get; set; } = new List<ParentDetailsViewModel>();
         public ParentDetailsViewModel ParentViewModel { get; set; } = new ParentDetailsViewModel();
@@ -25,16 +30,35 @@ namespace Web.Pages
         {
             if (await FluentValidationValidator!.ValidateAsync())
             {
-                Parents.Add(await ParentService.Create(ParentViewModel));
-                ActionType = ActionType.None;
+                var parent = await ParentService.Create(ParentViewModel);
+                if (parent != null)
+                {
+                    Parents.Add(parent);
+                    ActionType = ActionType.None;
+
+                    ToastService.ShowSuccess("Parent created.");
+                }
+                else
+                {
+                    ToastService.ShowError(ErrorMessage);
+                }
             }
         }
 
         public async Task Delete()
         {
-            await ParentService.Delete(ParentViewModel.Id);
-            Parents.Remove(ParentViewModel);
-            ActionType = ActionType.None;
+            var result = await ParentService.Delete(ParentViewModel.Id);
+            if (result)
+            {
+                Parents.Remove(ParentViewModel);
+                ActionType = ActionType.None;
+
+                ToastService.ShowSuccess("Parent deleted.");
+            }
+            else
+            {
+                ToastService.ShowError(ErrorMessage);
+            }
         }
 
         public async Task Update()
@@ -42,9 +66,18 @@ namespace Web.Pages
             if (await FluentValidationValidator!.ValidateAsync())
             {
                 var parent = await ParentService.Update(ParentViewModel);
-                int index = Parents.FindIndex(x => x.Id == parent.Id);
-                Parents[index] = parent;
-                ActionType = ActionType.None;
+                if (parent != null)
+                {
+                    int index = Parents.FindIndex(x => x.Id == parent.Id);
+                    Parents[index] = parent;
+                    ActionType = ActionType.None;
+
+                    ToastService.ShowSuccess("Parent updated.");
+                }
+                else
+                {
+                    ToastService.ShowError(ErrorMessage);
+                }
             }
         }
 

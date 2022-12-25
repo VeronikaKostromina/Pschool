@@ -61,6 +61,7 @@ namespace Web.Pages
             {
                 Students?.Remove(StudentViewModel);
                 ActionType = ActionType.None;
+
                 ToastService.ShowSuccess("Student deleted.");
             }
             else
