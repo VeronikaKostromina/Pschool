@@ -9,7 +9,7 @@ namespace Pschool.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ParentsController : ControllerBase
+    public class ParentsController : BaseController
     {
         private readonly IMapper mapper;
         private readonly IParentManager parentManager;
@@ -33,9 +33,13 @@ namespace Pschool.Controllers
         [ProducesResponseType(typeof(ParentDetailsViewModel), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Create([FromBody] CreateParentViewModel createParentViewModel)
         {
-            var parent = await parentManager.Create(mapper.Map<Parent>(createParentViewModel));
-            logger.LogInformation("Parent created: {@parent}", parent);
-            return Ok(mapper.Map<ParentDetailsViewModel>(parent));
+            var parent = mapper.Map<Parent>(createParentViewModel);
+
+            return Reply(await parentManager.Create(parent), x =>
+            {
+                logger.LogInformation("Parent created: {@parent}", x);
+                return mapper.Map<ParentDetailsViewModel>(x);
+            });
         }
 
         [HttpPut]
@@ -45,9 +49,12 @@ namespace Pschool.Controllers
         {
             var parent = mapper.Map<Parent>(updateParentViewModel);
             parent.Id = id;
-            await parentManager.Update(parent);
-            logger.LogInformation("Parent updated: {@parent}", parent);
-            return Ok(mapper.Map<ParentDetailsViewModel>(parent));
+
+            return Reply(await parentManager.Update(parent), x =>
+            {
+                logger.LogInformation("Parent updated: {@parent}", x);
+                return mapper.Map<ParentDetailsViewModel>(x);
+            });
         }
 
         [HttpDelete]

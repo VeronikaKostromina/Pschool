@@ -1,9 +1,7 @@
-﻿using FluentValidation;
-using Pschool.Contracts;
+﻿using Pschool.Contracts;
 using Pschool.Managers;
-using Pschool.Shared.Validators;
-using Pschool.Shared.ViewModels.ParentViewModels;
-using Pschool.Shared.ViewModels.StudentViewModels;
+using Pschool.Shared.Models;
+using Pschool.Validation;
 
 namespace Pschool.Extensions
 {
@@ -14,8 +12,8 @@ namespace Pschool.Extensions
             services.AddScoped<IStudentManager, StudentManager>();
             services.AddScoped<IParentManager, ParentManager>();
 
-            services.AddScoped<IValidator<ParentDetailsViewModel>, ParentModelValidator>();
-            services.AddScoped<IValidator<StudentDetailsViewModel>, StudentModelValidator>();
+            services.AddScoped<IValidator<Parent>, ParentValidator>();
+            services.AddScoped<IValidator<Student>, StudentValidator>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));

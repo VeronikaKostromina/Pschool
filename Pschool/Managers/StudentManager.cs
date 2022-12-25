@@ -1,4 +1,6 @@
-﻿using Pschool.Contracts;
+﻿using FluentValidation;
+using LanguageExt.Common;
+using Pschool.Contracts;
 using Pschool.Shared.Models;
 
 namespace Pschool.Managers
@@ -7,22 +9,32 @@ namespace Pschool.Managers
     {
         private readonly IRepository<Student> studentRepository;
         private readonly IUnitOfWork unitOfWork;
+        private readonly Validation.IValidator<Student> studentValidator;
 
-        public StudentManager(IRepository<Student> studentRepository, IUnitOfWork unitOfWork)
+        public StudentManager(
+            IRepository<Student> studentRepository,
+            IUnitOfWork unitOfWork, Validation.IValidator<Student> studentValidator)
         {
             this.studentRepository = studentRepository;
             this.unitOfWork = unitOfWork;
+            this.studentValidator = studentValidator;
         }
 
-        public async Task<Student> Create(Student entity)
+        public async Task<Result<Student>> Create(Student student)
         {
-            entity.Created = DateTime.UtcNow;
-            entity.Updated = DateTime.UtcNow;
+            var validationResult = await studentValidator.CanCreateAsync(student);
+            if (validationResult.IsValid == false)
+            {
+                return new Result<Student>(new ValidationException(validationResult.Errors));
+            }
 
-            await studentRepository.AddAsync(entity);
+            student.Created = DateTime.UtcNow;
+            student.Updated = DateTime.UtcNow;
+
+            await studentRepository.AddAsync(student);
             await unitOfWork.SaveAsync();
 
-            return entity;
+            return student;
         }
 
         public async Task Remove(long key)
@@ -31,14 +43,20 @@ namespace Pschool.Managers
             await unitOfWork.SaveAsync();
         }
 
-        public async Task<Student> Update(Student entity)
+        public async Task<Result<Student>> Update(Student student)
         {
-            entity.Updated = DateTime.UtcNow;
+            var validationResult = await studentValidator.CanCreateAsync(student);
+            if (validationResult.IsValid == false)
+            {
+                return new Result<Student>(new ValidationException(validationResult.Errors));
+            }
 
-            studentRepository.Update(entity);
+            student.Updated = DateTime.UtcNow;
+
+            studentRepository.Update(student);
             await unitOfWork.SaveAsync();
 
-            return entity;
+            return student;
         }
 
         public IQueryable<Student> FindAll()

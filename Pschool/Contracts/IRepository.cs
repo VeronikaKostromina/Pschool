@@ -10,6 +10,7 @@ namespace Pschool.Contracts
         void Update(TEntity entity);
         IQueryable<TEntity> FindAll(bool asNoTracking = true);
         IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> filter, bool asNoTracking = true);
-        Task<TEntity> FindByKeyAsync(object key);
+        Task<TEntity?> FindByKeyAsync(object key);
+        Task<bool> AnyAsync(Expression<Func<TEntity, bool>> filter);
     }
 }

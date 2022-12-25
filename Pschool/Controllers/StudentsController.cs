@@ -9,7 +9,7 @@ namespace Pschool.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StudentsController : ControllerBase
+    public class StudentsController : BaseController
     {
         private readonly IMapper mapper;
         private readonly IStudentManager studentManager;
@@ -36,9 +36,13 @@ namespace Pschool.Controllers
         [ProducesResponseType(typeof(StudentDetailsViewModel), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Create([FromBody] CreateStudentViewModel createStudentViewModel)
         {
-            var student = await studentManager.Create(mapper.Map<Student>(createStudentViewModel));
-            logger.LogInformation("Student created: {@student}", student);
-            return Ok(mapper.Map<StudentDetailsViewModel>(student));
+            var student = mapper.Map<Student>(createStudentViewModel); ;
+
+            return Reply(await studentManager.Create(student), x =>
+            {
+                logger.LogInformation("Student created: {@student}", x);
+                return mapper.Map<StudentDetailsViewModel>(x);
+            });
         }
 
         [HttpPut]
@@ -48,10 +52,12 @@ namespace Pschool.Controllers
         {
             var student = mapper.Map<Student>(updateStudentViewModel);
             student.Id = id;
-            await studentManager.Update(student);
-            logger.LogInformation("Student updated: {@student}", student);
 
-            return Ok(mapper.Map<StudentDetailsViewModel>(student));
+            return Reply(await studentManager.Update(student), x =>
+            {
+                logger.LogInformation("Student updated: {@student}", x);
+                return mapper.Map<StudentDetailsViewModel>(x);
+            });
         }
 
         [HttpDelete]

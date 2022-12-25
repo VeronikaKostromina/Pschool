@@ -1,4 +1,6 @@
-﻿using Pschool.Contracts;
+﻿using FluentValidation;
+using LanguageExt.Common;
+using Pschool.Contracts;
 using Pschool.Shared.Models;
 
 namespace Pschool.Managers
@@ -7,17 +9,26 @@ namespace Pschool.Managers
     {
         private readonly IRepository<Parent> parentRepository;
         private readonly IUnitOfWork unitOfWork;
+        private readonly Validation.IValidator<Parent> parentValidator;
 
         public ParentManager(
             IRepository<Parent> parentRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            Validation.IValidator<Parent> parentValidator)
         {
             this.parentRepository = parentRepository ?? throw new ArgumentNullException(nameof(parentRepository));
             this.unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+            this.parentValidator = parentValidator;
         }
 
-        public async Task<Parent> Create(Parent parent)
+        public async Task<Result<Parent>> Create(Parent parent)
         {
+            var validationResult = await parentValidator.CanCreateAsync(parent);
+            if (validationResult.IsValid == false)
+            {
+                return new Result<Parent>(new ValidationException(validationResult.Errors));
+            }
+
             parent.Created = DateTime.UtcNow;
             parent.Updated = DateTime.UtcNow;
 
@@ -32,8 +43,14 @@ namespace Pschool.Managers
             await unitOfWork.SaveAsync();
         }
 
-        public async Task<Parent> Update(Parent parent)
+        public async Task<Result<Parent>> Update(Parent parent)
         {
+            var validationResult = await parentValidator.CanUpdateAsync(parent);
+            if (validationResult.IsValid == false)
+            {
+                return new Result<Parent>(new ValidationException(validationResult.Errors));
+            }
+
             parent.Updated = DateTime.UtcNow;
             parentRepository.Update(parent);
             await unitOfWork.SaveAsync();

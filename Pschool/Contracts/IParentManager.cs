@@ -1,12 +1,13 @@
-﻿using Pschool.Shared.Models;
+﻿using LanguageExt.Common;
+using Pschool.Shared.Models;
 
 namespace Pschool.Contracts
 {
     public interface IParentManager
     {
-        Task<Parent> Create(Parent parent);
+        Task<Result<Parent>> Create(Parent parent);
         Task Remove(long key);
-        Task<Parent> Update(Parent parent);
+        Task<Result<Parent>> Update(Parent parent);
 
         IQueryable<Parent> FindAll();
     }
