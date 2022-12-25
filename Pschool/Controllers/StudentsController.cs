@@ -13,32 +13,45 @@ namespace Pschool.Controllers
     {
         private readonly IMapper mapper;
         private readonly IStudentManager studentManager;
+        private readonly ILogger<StudentsController> logger;
 
-        public StudentsController(IMapper mapper, IStudentManager studentManager)
+        public StudentsController(
+            IMapper mapper,
+            IStudentManager studentManager,
+            ILogger<StudentsController> logger)
         {
             this.mapper = mapper;
             this.studentManager = studentManager;
+            this.logger = logger;
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(List<StudentViewModel>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<StudentDetailsViewModel>), (int)HttpStatusCode.OK)]
         public IActionResult GetAll()
         {
-            return Ok(mapper.Map<List<StudentViewModel>>(studentManager.FindAll()));
+            return Ok(mapper.Map<List<StudentDetailsViewModel>>(studentManager.FindAll()));
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(StudentViewModel), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> Create([FromBody] StudentViewModel StudentViewModel)
+        [ProducesResponseType(typeof(StudentDetailsViewModel), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> Create([FromBody] CreateStudentViewModel createStudentViewModel)
         {
-            return Ok(mapper.Map<StudentViewModel>(await studentManager.Create(mapper.Map<Student>(StudentViewModel))));
+            var student = await studentManager.Create(mapper.Map<Student>(createStudentViewModel));
+            logger.LogInformation("Student created: {@student}", student);
+            return Ok(mapper.Map<StudentDetailsViewModel>(student));
         }
 
         [HttpPut]
-        [ProducesResponseType(typeof(StudentViewModel), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> Update([FromBody] StudentViewModel StudentViewModel)
+        [Route("{id:long}")]
+        [ProducesResponseType(typeof(StudentDetailsViewModel), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> Update(long id, [FromBody] UpdateStudentViewModel updateStudentViewModel)
         {
-            return Ok(mapper.Map<StudentViewModel>(await studentManager.Update(mapper.Map<Student>(StudentViewModel))));
+            var student = mapper.Map<Student>(updateStudentViewModel);
+            student.Id = id;
+            await studentManager.Update(student);
+            logger.LogInformation("Student updated: {@student}", student);
+
+            return Ok(mapper.Map<StudentDetailsViewModel>(student));
         }
 
         [HttpDelete]
@@ -47,15 +60,16 @@ namespace Pschool.Controllers
         public async Task<IActionResult> Delete(long id)
         {
             await studentManager.Remove(id);
+            logger.LogInformation("Student removed. ID: {id}", id);
             return Ok();
         }
 
         [HttpGet]
         [Route("~/api/parents/{id:long}/students")]
-        [ProducesResponseType(typeof(List<StudentViewModel>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<StudentDetailsViewModel>), (int)HttpStatusCode.OK)]
         public IActionResult GetByParentId(long id)
         {
-            return Ok(mapper.Map<List<StudentViewModel>>(studentManager.FindByParent(id)));
+            return Ok(mapper.Map<List<StudentDetailsViewModel>>(studentManager.FindByParent(id)));
         }
     }
 }

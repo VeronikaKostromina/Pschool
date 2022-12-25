@@ -8,17 +8,22 @@ namespace Pschool.Managers
         private readonly IRepository<Parent> parentRepository;
         private readonly IUnitOfWork unitOfWork;
 
-        public ParentManager(IRepository<Parent> parentRepository, IUnitOfWork unitOfWork)
+        public ParentManager(
+            IRepository<Parent> parentRepository,
+            IUnitOfWork unitOfWork)
         {
-            this.parentRepository = parentRepository;
-            this.unitOfWork = unitOfWork;
+            this.parentRepository = parentRepository ?? throw new ArgumentNullException(nameof(parentRepository));
+            this.unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         }
 
-        public async Task<Parent> Create(Parent entity)
+        public async Task<Parent> Create(Parent parent)
         {
-            await parentRepository.AddAsync(entity);
+            parent.Created = DateTime.UtcNow;
+            parent.Updated = DateTime.UtcNow;
+
+            await parentRepository.AddAsync(parent);
             await unitOfWork.SaveAsync();
-            return entity;
+            return parent;
         }
 
         public async Task Remove(long key)
@@ -27,11 +32,12 @@ namespace Pschool.Managers
             await unitOfWork.SaveAsync();
         }
 
-        public async Task<Parent> Update(Parent entity)
+        public async Task<Parent> Update(Parent parent)
         {
-            parentRepository.Update(entity);
+            parent.Updated = DateTime.UtcNow;
+            parentRepository.Update(parent);
             await unitOfWork.SaveAsync();
-            return entity;
+            return parent;
         }
 
         public IQueryable<Parent> FindAll()

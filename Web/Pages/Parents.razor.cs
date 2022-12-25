@@ -3,15 +3,15 @@ using Microsoft.AspNetCore.Components;
 using Pschool.Shared.ViewModels.ParentViewModels;
 using Web.Services.Contracts;
 
-namespace Web
+namespace Web.Pages
 {
     public class ParentBase : ComponentBase
     {
         [Inject]
         public IParentService ParentService { get; set; }
 
-        public List<ParentViewModel> Parents { get; set; } = new List<ParentViewModel>();
-        public ParentViewModel ParentViewModel { get; set; } = new ParentViewModel();
+        public List<ParentDetailsViewModel> Parents { get; set; } = new List<ParentDetailsViewModel>();
+        public ParentDetailsViewModel ParentViewModel { get; set; } = new ParentDetailsViewModel();
         public FluentValidationValidator? FluentValidationValidator { get; set; } = new FluentValidationValidator();
         public bool ShowModal { get; set; } = false;
         public bool DeleteAction { get; set; } = false;
@@ -59,7 +59,7 @@ namespace Web
             UpdateAction = false;
         }
 
-        public void ShowDialogModal(bool update, bool create, bool delete, ParentViewModel parent)
+        public void ShowDialogModal(bool update, bool create, bool delete, ParentDetailsViewModel parent)
         {
             ShowModal = true;
             DeleteAction = delete;
@@ -67,7 +67,6 @@ namespace Web
             UpdateAction = update;
 
             ParentViewModel = parent;
-
         }
     }
 }

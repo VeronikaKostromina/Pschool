@@ -4,7 +4,7 @@ using Pschool.Shared.ViewModels.ParentViewModels;
 using Pschool.Shared.ViewModels.StudentViewModels;
 using Web.Services.Contracts;
 
-namespace Web
+namespace Web.Pages
 {
     public class StudentBase : ComponentBase
     {
@@ -13,10 +13,10 @@ namespace Web
         [Inject]
         public IParentService ParentService { get; set; }
 
-        public List<StudentViewModel> Students { get; set; } = new List<StudentViewModel>();
-        public List<ParentViewModel> Parents { get; set; } = new List<ParentViewModel>();
-        public StudentViewModel StudentViewModel { get; set; } = new StudentViewModel();
-        public ParentViewModel ParentViewModel { get; set; } = new ParentViewModel();
+        public List<StudentDetailsViewModel> Students { get; set; } = new List<StudentDetailsViewModel>();
+        public List<ParentDetailsViewModel> Parents { get; set; } = new List<ParentDetailsViewModel>();
+        public StudentDetailsViewModel StudentViewModel { get; set; } = new StudentDetailsViewModel();
+        public ParentDetailsViewModel ParentViewModel { get; set; } = new ParentDetailsViewModel();
         public FluentValidationValidator? FluentValidationValidator { get; set; } = new FluentValidationValidator();
         public long ParentId { get; set; }
         public bool ShowModal { get; set; } = false;
@@ -66,7 +66,7 @@ namespace Web
             UpdateAction = false;
         }
 
-        public void ShowDialogModal(bool update, bool create, bool delete, StudentViewModel student)
+        public void ShowDialogModal(bool update, bool create, bool delete, StudentDetailsViewModel student)
         {
             ShowModal = true;
             DeleteAction = delete;
@@ -84,7 +84,7 @@ namespace Web
                 ? await StudentService.GetByParentId(parentId)
                 : await StudentService.GetAll();
 
-            this.StateHasChanged();
+            StateHasChanged();
         }
     }
 }

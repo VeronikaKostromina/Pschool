@@ -97,10 +97,10 @@
 
 <EditForm Model="StudentViewModel">
 
-    <button class="btn btn-success" @onclick="() => ShowDialogModal(false, true, false, new StudentViewModel())">Add</button>
+    <button class="btn btn-success" @onclick="() => ShowDialogModal(false, true, false, new StudentDetailsViewModel())">Add</button>
     <label>Filter by parents:</label>
 
-    <InputSelect id="Parents" class="form-control"
+    <InputSelect id="parent" class="form-control"
                  ValueExpression="@(() => ParentId)"
                  Value="@ParentId"
                  ValueChanged="@((long value) => OnParentChange(value))">
@@ -131,7 +131,7 @@
                     <td align="center">@student.ClassNumber</td>
                     <td>
                         <button class="btn btn-primary"
-                            @onclick="() => ShowDialogModal(true, false, false, new StudentViewModel() {Id = student.Id, ParentId = student.ParentId, ClassNumber = student.ClassNumber, FirstName = student.FirstName, LastName = student.LastName })">
+                            @onclick="() => ShowDialogModal(true, false, false, new StudentDetailsViewModel() {Id = student.Id, ParentId = student.ParentId, ClassNumber = student.ClassNumber, FirstName = student.FirstName, LastName = student.LastName })">
                             Edit
                         </button>
                         <button class="btn btn-danger" @onclick="() => ShowDialogModal(false, false, true, student)">Delete</button>

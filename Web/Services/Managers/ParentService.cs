@@ -14,9 +14,9 @@ namespace Web.Services.Managers
             this.httpClient = httpClient;
         }
 
-        public async Task<List<ParentViewModel>> GetAll()
+        public async Task<List<ParentDetailsViewModel>> GetAll()
         {
-            return await httpClient.GetFromJsonAsync<List<ParentViewModel>>("api/parents");
+            return await httpClient.GetFromJsonAsync<List<ParentDetailsViewModel>>("api/parents");
         }
 
         public async Task Delete(long id)
@@ -24,22 +24,22 @@ namespace Web.Services.Managers
             await httpClient.DeleteAsync($"api/Parents/{id}");
         }
 
-        public async Task<ParentViewModel> Create(ParentViewModel parentViewModel)
+        public async Task<ParentDetailsViewModel> Create(ParentDetailsViewModel parentViewModel)
         {
             var json = JsonConvert.SerializeObject(parentViewModel);
             var result = await httpClient.PostAsync("api/Parents", new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
             var stringResult = await result.Content.ReadAsStringAsync();
 
-            return JsonConvert.DeserializeObject<ParentViewModel>(stringResult);
+            return JsonConvert.DeserializeObject<ParentDetailsViewModel>(stringResult);
         }
 
-        public async Task<ParentViewModel> Update(ParentViewModel parentViewModel)
+        public async Task<ParentDetailsViewModel> Update(ParentDetailsViewModel parentViewModel)
         {
             var json = JsonConvert.SerializeObject(parentViewModel);
-            var result = await httpClient.PutAsync("api/Parents", new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
+            var result = await httpClient.PutAsync($"api/Parents/{parentViewModel.Id}", new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
             var stringResult = await result.Content.ReadAsStringAsync();
 
-            return JsonConvert.DeserializeObject<ParentViewModel>(stringResult);
+            return JsonConvert.DeserializeObject<ParentDetailsViewModel>(stringResult);
         }
     }
 }

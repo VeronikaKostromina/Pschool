@@ -4,9 +4,9 @@ namespace Web.Services.Contracts
 {
     public interface IParentService
     {
-        Task<List<ParentViewModel>> GetAll();
+        Task<List<ParentDetailsViewModel>> GetAll();
         Task Delete(long id);
-        Task<ParentViewModel> Create(ParentViewModel parentViewModel);
-        Task<ParentViewModel> Update(ParentViewModel parentViewModel);
+        Task<ParentDetailsViewModel> Create(ParentDetailsViewModel parentViewModel);
+        Task<ParentDetailsViewModel> Update(ParentDetailsViewModel parentViewModel);
     }
 }

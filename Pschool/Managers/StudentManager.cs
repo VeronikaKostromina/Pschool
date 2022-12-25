@@ -16,8 +16,12 @@ namespace Pschool.Managers
 
         public async Task<Student> Create(Student entity)
         {
+            entity.Created = DateTime.UtcNow;
+            entity.Updated = DateTime.UtcNow;
+
             await studentRepository.AddAsync(entity);
             await unitOfWork.SaveAsync();
+
             return entity;
         }
 
@@ -29,8 +33,11 @@ namespace Pschool.Managers
 
         public async Task<Student> Update(Student entity)
         {
+            entity.Updated = DateTime.UtcNow;
+
             studentRepository.Update(entity);
             await unitOfWork.SaveAsync();
+
             return entity;
         }
 

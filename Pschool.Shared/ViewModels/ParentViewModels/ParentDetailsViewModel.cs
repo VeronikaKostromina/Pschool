@@ -1,6 +1,6 @@
 ﻿namespace Pschool.Shared.ViewModels.ParentViewModels
 {
-    public class ParentViewModel
+    public class ParentDetailsViewModel
     {
         public long Id { get; set; }
         public string? FirstName { get; set; }

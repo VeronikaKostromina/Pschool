@@ -9,11 +9,13 @@ namespace Pschool
     {
         public AutoMapperProfile()
         {
-            CreateMap<Student, StudentViewModel>();
-            CreateMap<StudentViewModel, Student>();
+            CreateMap<Student, StudentDetailsViewModel>();
+            CreateMap<CreateStudentViewModel, Student>();
+            CreateMap<UpdateStudentViewModel, Student>();
 
-            CreateMap<Parent, ParentViewModel>();
-            CreateMap<ParentViewModel, Parent>();
+            CreateMap<Parent, ParentDetailsViewModel>();
+            CreateMap<CreateParentViewModel, Parent>();
+            CreateMap<UpdateParentViewModel, Parent>();
         }
     }
 }

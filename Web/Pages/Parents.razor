@@ -7,7 +7,7 @@
 <h1>Parents info</h1>
 
 <div>
-    <button class="btn btn-success" @onclick="() => ShowDialogModal(false, true, false, new ParentViewModel())">Add</button>
+    <button class="btn btn-success" @onclick="() => ShowDialogModal(false, true, false, new ParentDetailsViewModel())">Add</button>
 </div>
 
 @if (ShowModal)
@@ -120,7 +120,7 @@
                 <td>
                     <button class="btn btn-primary" 
                             @onclick="() => 
-                             ShowDialogModal(true, false, false,new ParentViewModel(){Id = parent.Id, FirstName = parent.FirstName, LastName = parent.LastName,
+                             ShowDialogModal(true, false, false,new ParentDetailsViewModel(){Id = parent.Id, FirstName = parent.FirstName, LastName = parent.LastName,
                              Email = parent.Email, Phone = parent.Phone, HomeAddress = parent.HomeAddress})">Edit</button>
                     <button class="btn btn-danger" @onclick="() => ShowDialogModal(false, false, true,parent)">Delete</button>
                 </td>

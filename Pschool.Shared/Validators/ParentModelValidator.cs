@@ -4,7 +4,7 @@ using Pschool.Shared.ViewModels.ParentViewModels;
 
 namespace Pschool.Shared.Validators
 {
-    public class ParentModelValidator : AbstractValidator<ParentViewModel>
+    public class ParentModelValidator : AbstractValidator<ParentDetailsViewModel>
     {
         public ParentModelValidator()
         {

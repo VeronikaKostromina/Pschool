@@ -3,7 +3,7 @@ using Pschool.Shared.ViewModels.StudentViewModels;
 
 namespace Pschool.Shared.Validators
 {
-    public class StudentModelValidator : AbstractValidator<StudentViewModel>
+    public class StudentModelValidator : AbstractValidator<StudentDetailsViewModel>
     {
         public StudentModelValidator()
         {
