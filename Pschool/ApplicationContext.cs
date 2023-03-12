@@ -12,11 +12,13 @@ namespace Pschool
 
         public DbSet<Student> Students { get; set; } = null!;
         public DbSet<Parent> Parents { get; set; } = null!;
+        public DbSet<Document> Documents { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration<Student>(new StudentConfiguration());
             modelBuilder.ApplyConfiguration<Parent>(new ParentConfiguration());
+            modelBuilder.ApplyConfiguration<Document>(new DocumentConfiguration());
         }
     }
 }

@@ -1,0 +1,23 @@
+{
+  "dependencies": {
+    "appInsights1": {
+      "type": "appInsights"
+    },
+    "secrets1": {
+      "type": "secrets"
+    },
+    "storage2": {
+      "type": "storage",
+      "connectionId": "DefaultEndpointsProtocol=https;AccountName=storagedocumentcreate;AccountKey=i5JuKYuErq/gFRxjyE87lllXNr/d4IB3zz37WI6gEDdCJRL54c1/Il5tZUwE29f+0rPpQQVeDhiu+ASt1xmwWA==;EndpointSuffix=core.windows.net"
+    },
+    "storage1": {
+      "type": "storage",
+      "connectionId": "DefaultEndpointsProtocol=https;AccountName=storagedocumentcreate;AccountKey=i5JuKYuErq:gFRxjyE87lllXNr:d4IB3zz37WI6gEDdCJRL54c1:Il5tZUwE29f+0rPpQQVeDhiu+ASt1xmwWA==;EndpointSuffix=core.windows.net:blob",
+      "dynamicId": null
+    },
+    "storage3": {
+      "type": "storage",
+      "connectionId": "AzureWebJobsStorage"
+    }
+  }
+}

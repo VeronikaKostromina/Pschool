@@ -1,6 +1,7 @@
 ﻿using Blazored.FluentValidation;
 using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Pschool.Shared.ViewModels.ParentViewModels;
 using Pschool.Shared.ViewModels.StudentViewModels;
 using Web.Services.Contracts;
@@ -28,6 +29,7 @@ namespace Web.Pages
         public long ParentId { get; set; }
 
         public ActionType ActionType { get; set; }
+        public IBrowserFile? File { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -39,7 +41,8 @@ namespace Web.Pages
         {
             if (await FluentValidationValidator!.ValidateAsync())
             {
-                var student = await StudentService.Create(StudentViewModel);
+
+                var student = await StudentService!.Create(StudentViewModel, File);
                 if (student != null)
                 {
                     var parent = Parents[Parents.FindIndex(x => x.Id == StudentViewModel.ParentId)];
@@ -47,18 +50,18 @@ namespace Web.Pages
                     Students?.Add(student);
                     ActionType = ActionType.None;
 
-                    ToastService.ShowSuccess("Student created.");
+                    ToastService!.ShowSuccess("Student created.");
                 }
                 else
                 {
-                    ToastService.ShowError(ErrorMessage);
+                    ToastService!.ShowError(ErrorMessage);
                 }
             }
         }
 
         public async Task Delete()
         {
-            var result = await StudentService.Delete(StudentViewModel.Id);
+            var result = await StudentService!.Delete(StudentViewModel.Id);
             if (result)
             {
                 Students?.Remove(StudentViewModel);
@@ -113,6 +116,14 @@ namespace Web.Pages
                 : await StudentService.GetAll();
 
             StateHasChanged();
+        }
+
+        public void LoadFiles(InputFileChangeEventArgs e)
+        {
+            if (e.FileCount == 1)
+            {
+                File = e.File;
+            }
         }
     }
 }

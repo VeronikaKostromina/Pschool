@@ -8,5 +8,7 @@
         public int ClassNumber { get; set; }
         public long ParentId { get; set; }
         public string? ParentFullName { get; set; }
+        public string? Email { get; set; }
+
     }
 }

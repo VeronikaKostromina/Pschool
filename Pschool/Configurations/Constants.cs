@@ -4,5 +4,6 @@
     {
         public static string StudentsTableName = "Students";
         public static string ParentsTableName = "Parents";
+        public static string DocumentTableName = "Documents";
     }
 }

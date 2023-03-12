@@ -51,10 +51,16 @@
                                 <ValidationMessage For=@(() => StudentViewModel.ClassNumber) />
                             </div>
                             <div class="form-group">
+                                <label for="Email">Email:</label>
+                                <InputText @bind-Value=StudentViewModel.Email class="form-control" id="Email" />
+                                <ValidationMessage For=@(() => StudentViewModel.Email) />
+                            </div>
+                            <div class="form-group">
                                 <label for="Parents">Student`s parent:</label>
 
                                 <InputSelect id="Parents" class="form-control" @bind-Value=StudentViewModel.ParentId>
 
+                                    <option value="-1"> Select Parent... </option>
                                     @foreach (var parent in Parents)
                                     {
                                         <option value="@parent.Id">@parent.FirstName @parent.LastName</option>
@@ -63,6 +69,13 @@
                                 <ValidationMessage For=@(() => StudentViewModel.ParentId) />
                             </div>
                             <br />
+                            @if (ActionType == ActionType.Create)
+                            {
+                                <div>
+                                    <label for="profilePicture">Profile Picture:</label>
+                                    <InputFile OnChange="@LoadFiles" class="form-control" accept=".docx" />
+                                </div>
+                            }
                         </div>
                     }
                     @if (ActionType == ActionType.Delete)
@@ -121,17 +134,19 @@
             <th>Last name</th>
             <th>Parent</th>
             <th>Class number</th>
+            <th>Email</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var student in Students)
+        @foreach (var student in Students!)
         {
             <tr>
                 <td>@student.FirstName</td>
                 <td>@student.LastName</td>
                 <td>@student.ParentFullName</td>
-                <td align="center">@student.ClassNumber</td>65keb wv-
+                <td align="center">@student.ClassNumber</td>
+                <th>@student.Email</th>
                 <td>
                     <button class="btn btn-primary"
                         @onclick="() => ShowDialogModal(
@@ -141,7 +156,8 @@
                                     ParentId = student.ParentId,
                                     ClassNumber = student.ClassNumber,
                                     FirstName = student.FirstName,
-                                    LastName = student.LastName })">
+                                    LastName = student.LastName,
+                                    Email = student.Email})">
                         Edit
                     </button>
                     <button class="btn btn-danger" @onclick="() => ShowDialogModal(ActionType.Delete, student)">Delete</button>

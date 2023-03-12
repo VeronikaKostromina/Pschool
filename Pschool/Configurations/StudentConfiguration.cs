@@ -15,11 +15,15 @@ namespace Pschool.Configurations
             builder.Property(x => x.FirstName).IsRequired();
             builder.Property(x => x.LastName).IsRequired();
             builder.Property(x => x.ClassNumber).IsRequired();
+            builder.Property(x => x.Email).IsRequired();
 
             builder
                 .HasOne(x => x.Parent)
                 .WithMany(p => p.Students)
                 .HasForeignKey(x => x.ParentId);
+            builder
+                .HasOne(x => x.Document)
+                .WithOne(x => x.Student);
         }
     }
 }

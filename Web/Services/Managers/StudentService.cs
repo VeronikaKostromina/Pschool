@@ -1,5 +1,7 @@
 ﻿using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Components.Forms;
 using Newtonsoft.Json;
 using Pschool.Shared.ViewModels.StudentViewModels;
 using Web.Services.Contracts;
@@ -26,14 +28,27 @@ namespace Web.Services.Managers
             return result.StatusCode == HttpStatusCode.OK;
         }
 
-        public async Task<StudentDetailsViewModel?> Create(StudentDetailsViewModel studentViewModel)
+        public async Task<StudentDetailsViewModel?> Create(StudentDetailsViewModel studentViewModel, IBrowserFile? file)
         {
-            var json = JsonConvert.SerializeObject(studentViewModel);
-            var result = await httpClient.PostAsync("api/Students", new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
+            using (var formData = new MultipartFormDataContent())
+            {
+                formData.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
 
-            return result.StatusCode != HttpStatusCode.OK
+                var json = JsonConvert.SerializeObject(studentViewModel);
+                formData.Add(new StringContent(json, System.Text.Encoding.UTF8, "application/json"), "json");
+                if (file != null)
+                {
+                    var fileContent = new StreamContent(file.OpenReadStream());
+                    fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+
+                    formData.Add(fileContent, "document", file.Name);
+                }
+                var result = await httpClient.PostAsync("api/Students", formData, CancellationToken.None);
+                return result.StatusCode != HttpStatusCode.OK
                 ? null
                 : JsonConvert.DeserializeObject<StudentDetailsViewModel>(await result.Content.ReadAsStringAsync());
+
+            }
         }
 
         public async Task<StudentDetailsViewModel?> Update(StudentDetailsViewModel studentViewModel)

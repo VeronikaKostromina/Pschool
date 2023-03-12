@@ -1,4 +1,5 @@
-﻿namespace Pschool.Shared.ViewModels.StudentViewModels
+﻿
+namespace Pschool.Shared.ViewModels.StudentViewModels
 {
     public class CreateStudentViewModel
     {
@@ -7,5 +8,7 @@
         public int ClassNumber { get; set; }
 
         public long ParentId { get; set; }
+        public string? Email { get; set; }
+
     }
 }

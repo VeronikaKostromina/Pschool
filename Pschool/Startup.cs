@@ -2,16 +2,18 @@
 using Microsoft.EntityFrameworkCore;
 using Pschool.Extensions;
 
+
 namespace Pschool
 {
     public class Startup
     {
+        IConfiguration Configuration { get; set; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        IConfiguration Configuration { get; set; }
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
@@ -24,6 +26,7 @@ namespace Pschool
 
             services.AddFluentValidationAutoValidation();
             services.AddAutoMapper(x => x.AddProfile(new AutoMapperProfile()));
+            services.Configure<AzureConfiguration>(Configuration.GetSection(nameof(AzureConfiguration)));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

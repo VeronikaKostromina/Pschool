@@ -17,10 +17,39 @@ namespace Pschool.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.12")
+                .HasAnnotation("ProductVersion", "7.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Pschool.Shared.Models.Document", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("StudentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId")
+                        .IsUnique();
+
+                    b.ToTable("Documents", (string)null);
+                });
 
             modelBuilder.Entity("Pschool.Shared.Models.Parent", b =>
                 {
@@ -28,7 +57,7 @@ namespace Pschool.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -65,13 +94,17 @@ namespace Pschool.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<int>("ClassNumber")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -94,6 +127,17 @@ namespace Pschool.Migrations
                     b.ToTable("Students", (string)null);
                 });
 
+            modelBuilder.Entity("Pschool.Shared.Models.Document", b =>
+                {
+                    b.HasOne("Pschool.Shared.Models.Student", "Student")
+                        .WithOne("Document")
+                        .HasForeignKey("Pschool.Shared.Models.Document", "StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("Pschool.Shared.Models.Student", b =>
                 {
                     b.HasOne("Pschool.Shared.Models.Parent", "Parent")
@@ -108,6 +152,11 @@ namespace Pschool.Migrations
             modelBuilder.Entity("Pschool.Shared.Models.Parent", b =>
                 {
                     b.Navigation("Students");
+                });
+
+            modelBuilder.Entity("Pschool.Shared.Models.Student", b =>
+                {
+                    b.Navigation("Document");
                 });
 #pragma warning restore 612, 618
         }

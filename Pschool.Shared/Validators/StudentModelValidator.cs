@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using FluentValidation.Validators;
 using Pschool.Shared.ViewModels.StudentViewModels;
 
 namespace Pschool.Shared.Validators
@@ -13,6 +14,7 @@ namespace Pschool.Shared.Validators
             RuleFor(x => x.LastName).MaximumLength(50).WithMessage("Last name can not be more than 50 symbols");
             RuleFor(x => x.ClassNumber).ExclusiveBetween(0, 12).WithMessage("Class number should be from 1 to 11");
             RuleFor(x => x.ParentId).NotEmpty().NotEqual(0).WithMessage("Student`s parent can not be empty");
+            RuleFor(x => x.Email).EmailAddress(EmailValidationMode.AspNetCoreCompatible).WithMessage("Not a valid email address");
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Pschool.Shared.ViewModels.StudentViewModels;
+﻿using Microsoft.AspNetCore.Components.Forms;
+using Pschool.Shared.ViewModels.StudentViewModels;
 
 namespace Web.Services.Contracts
 {
@@ -6,7 +7,7 @@ namespace Web.Services.Contracts
     {
         Task<List<StudentDetailsViewModel>?> GetAll();
         Task<bool> Delete(long id);
-        Task<StudentDetailsViewModel?> Create(StudentDetailsViewModel studentViewModel);
+        Task<StudentDetailsViewModel?> Create(StudentDetailsViewModel studentViewModel, IBrowserFile? file);
         Task<StudentDetailsViewModel?> Update(StudentDetailsViewModel studentViewModel);
         Task<List<StudentDetailsViewModel>?> GetByParentId(long id);
     }
